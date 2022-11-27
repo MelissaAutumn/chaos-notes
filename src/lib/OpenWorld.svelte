@@ -2,6 +2,8 @@
   // Percentage
   import {objectToStyle} from "../helpers/object.js";
 
+  const perspective = 1024;
+  const zoomIncrements = perspective * 0.05;
   const MOUSE_BUTTONS = {
     left: 0,
     middle: 1,
@@ -10,15 +12,22 @@
     forth: 3,
     fifth: 4,
   }
+  const MODES = {
+    viewMode: 'view mode',
+    moveMode: 'move mode',
+  }
 
-  let moveMode = false;
-  let currentZoom = 0;
+  let currentMode = MODES.viewMode;
+  let currentZoom = 0.0;
   let position = {
     x: 0,
     y: 0,
   }
   $: cameraStyle = {
-    transform: `perspective(2048px) translate3D(${position.x}px, ${position.y}px, ${currentZoom}px)`
+    transform: `perspective(${perspective}px) translate3D(${position.x}px, ${position.y}px, ${currentZoom}px)`,
+  }
+  $: backdropStyle = {
+    cursor: currentMode === MODES.moveMode ? 'move' : 'default',
   }
 
   /**
@@ -26,8 +35,10 @@
    * @param evt : WheelEvent
    */
   const onScroll = (evt) => {
-    // We want reverse direction
-    currentZoom -= evt.deltaY;
+    currentZoom += evt.deltaY > 0 ? -zoomIncrements : zoomIncrements;
+    // Clamp values
+    currentZoom = Math.min(currentZoom, perspective * 0.90);
+    currentZoom = Math.max(currentZoom, -perspective);
   }
   /**
    *
@@ -35,7 +46,7 @@
    */
   const onMouseDown = (evt) => {
     if (evt.button === MOUSE_BUTTONS.middle) {
-      moveMode = true;
+      currentMode = MODES.moveMode;
     }
   }
   /**
@@ -44,7 +55,7 @@
    */
   const onMouseUp = (evt) => {
     if (evt.button === MOUSE_BUTTONS.middle) {
-        moveMode = false;
+        currentMode = MODES.viewMode;
     }
   }
 
@@ -53,7 +64,7 @@
    * @param evt : MouseEvent
    */
   const onMouseMove = (evt) => {
-    if (!moveMode) {
+    if (currentMode !== MODES.moveMode) {
       return;
     }
     // TODO: Need to be normalized with zoom level
@@ -64,9 +75,15 @@
   }
 
 </script>
-<div class="backdrop" style={objectToStyle(cameraStyle)}>
-    <div class="camera">
-        <div class="box">Hello {cameraStyle.transform}</div>
+<div class="backdrop" style={objectToStyle(backdropStyle)}>
+    <div class="info-bar">
+        <span>Mode: {currentMode}</span>
+        <span></span>
+        <span>Coords: ({position.x}, {position.y}, {currentZoom.toFixed(2)})</span>
+    </div>
+
+    <div class="camera" style={objectToStyle(cameraStyle)}>
+        <div class="box">Hello !</div>
     </div>
 </div>
 <svelte:window
@@ -76,25 +93,32 @@
         on:wheel={onScroll}
 />
 <style>
+    .info-bar {
+        display: inline-grid;
+        width: 100%;
+        grid-template-columns: 1fr 2fr 1fr;
+        margin: 0 4px 0 4px;
+    }
+
     .backdrop {
         background-color: floralwhite;
         position: fixed;
         margin: 0;
-        height: 100%;
         width: 100%;
+        height: 100%;
     }
 
     .camera {
         position: fixed;
+        transform-style: preserve-3d;
         height: 100%;
         width: 100%;
     }
 
     .box {
         background-color: white;
-        border: black solid 1px;
+        border: black solid 2px;
         height: 128px;
         width: 128px;
-        transform: scale3d(100%, 100%, 100%);
     }
 </style>
