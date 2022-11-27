@@ -9,14 +9,17 @@
   import {objectToStyle} from "../helpers/object.js";
   import {MOUSE_BUTTONS} from "../helpers/mouse.js";
 
-  export let size = {
-    width: 128,
-    height: 128,
-  }
-  export let position = {
+  export let defaultPosition = {
     x: 0,
     y: 0,
   }
+  export let defaultSize = {
+    width: 128,
+    height: 128,
+  }
+
+  let size = defaultSize
+  let position = defaultPosition
   const MODES = {
     viewMode: 'view mode',
     editMode: 'edit mode',
@@ -98,7 +101,7 @@
     left: `${position.x}px`,
     top: `${position.y}px`,
     cursor: CURSOR_MAP[currentMode] ?? 'default',
-    'user-select': currentMode === MODES.moveMode ? 'none' : 'initial',
+    'user-select': currentMode !== MODES.editMode ? 'none' : 'initial',
   };
 
 </script>
