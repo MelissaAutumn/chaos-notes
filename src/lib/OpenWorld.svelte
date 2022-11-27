@@ -1,17 +1,11 @@
 <script>
-  // Percentage
   import {objectToStyle} from "../helpers/object.js";
+  import Note from "$lib/Note.svelte";
+  import {MOUSE_BUTTONS} from "../helpers/mouse.js";
 
   const perspective = 1024;
   const zoomIncrements = perspective * 0.05;
-  const MOUSE_BUTTONS = {
-    left: 0,
-    middle: 1,
-    right: 2,
-    // Usually side buttons
-    forth: 3,
-    fifth: 4,
-  }
+
   const MODES = {
     viewMode: 'view mode',
     moveMode: 'move mode',
@@ -83,7 +77,7 @@
     </div>
 
     <div class="camera" style={objectToStyle(cameraStyle)}>
-        <div class="box">Hello !</div>
+        <Note/>
     </div>
 </div>
 <svelte:window
