@@ -39,7 +39,7 @@
     currentZoom += evt.deltaY > 0 ? -zoomIncrements : zoomIncrements;
     // Clamp values
     currentZoom = Math.min(currentZoom, perspective * 0.90);
-    currentZoom = Math.max(currentZoom, -perspective);
+    currentZoom = Math.max(currentZoom, -perspective * 2);
   }
   /**
    * Set to move mode if we're holding down middle mouse
