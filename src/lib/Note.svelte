@@ -25,7 +25,7 @@
     editMode: 'edit mode',
     moveMode: 'move mode',
   }
-  let currentMode = MODES.viewMode;
+  let currentMode = MODES.editMode;
   let isFocused = false;
 
   const CURSOR_MAP = {
@@ -116,6 +116,7 @@
         style={objectToStyle(style)}
         class="note"
         contenteditable={currentMode === MODES.editMode}
+        autofocus
 >
     Double click to edit me! {currentMode}
 </div>
